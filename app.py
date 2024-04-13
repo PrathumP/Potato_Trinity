@@ -5,7 +5,7 @@ import base64
 
 def display_preventive_measures(predicted_disease):
     preventive_measures = {
-        "early_blight": {
+        "Early_blight": {
             "measures": [
                 "Apply fungicides containing copper or chlorothalonil.",
                 "Remove infected leaves to prevent spread.",
@@ -16,7 +16,7 @@ def display_preventive_measures(predicted_disease):
                 "- [Video: Early Blight Prevention](https://www.youtube.com/watch?v=dQw4w9WgXcQ)"
             ]
         },
-        "late_blight": {
+        "Late_blight": {
             "measures": [
                 "Use fungicides containing chlorothalonil or maneb.",
                 "Avoid overhead watering to reduce humidity levels.",
@@ -27,7 +27,7 @@ def display_preventive_measures(predicted_disease):
                 "- [Video: Late Blight Prevention](https://www.youtube.com/watch?v=dQw4w9WgXcQ)"
             ]
         },
-        "healthy": {
+        "Potato__healthy": {
             "measures": ["No preventive measures required.", "Keep watering the plants. "], 
             "resources": []
         }
@@ -75,8 +75,9 @@ if file_up is not None:
 
     st.write("### Predictions:")
     for label, score in sorted_labels:
-        st.write(f"**{label.capitalize()}**: {score}%")
-        st.progress(score / 100) 
+        st.write(f"**{label.capitalize()}**: {score*100:.2f}%")
+        st.progress(score )
+
 
     predicted_disease = sorted_labels[0][0]
     display_preventive_measures(predicted_disease)

@@ -239,30 +239,34 @@ class ResNet9(Potato):
 
 
 
-def predict(img):
-  model = ResNet9(3,3)
-  model.load_state_dict(torch.load('PotatoWeights.pth'))
-  transform = transforms.Compose([
-        # transforms.Resize((256, 256)),  # Resize to the input size expected by the model
+from PIL import Image
+
+def predict(img_path):
+    model = ResNet9(3, 3)
+    model.load_state_dict(torch.load('PotatoWeights.pth'))
+    transform = transforms.Compose([
+        transforms.Resize((256, 256)),  # Resize to the input size expected by the model
         transforms.ToTensor(),           # Convert PIL image to PyTorch tensor
-        # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize
+        # If the model was trained with normalization, apply it here
+        # transforms.Normalize(mean=[...], std=[...])
     ])
-  label_map = {
-    'Potato___healthy': 0,
-    'Potato___Early_blight': 1,
-    'Potato___Late_blight': 2
-  }
-  image = transform(img).unsqueeze(0)
-  #train_loader=DeviceDataLoader(image,device)
-  #to_device(model,device)
-  # Get model predictions
-    #with torch.no_grad():
-  model.eval()  # Set the model to evaluation mode
-  outputs = model(image)
+    label_map = {
+        0: 'Potato__healthy',
+        1: 'Early_blight',
+        2: 'Late_blight'
+    }
+    # Load the image
+    img = Image.open(img_path)
+    # Apply transformations
+    img = transform(img).unsqueeze(0)
+    # Set model to evaluation mode
+    model.eval()
+    # Get model predictions
+    with torch.no_grad():
+        outputs = model(img)
     # Apply softmax to get probabilities
-  probabilities = F.softmax(outputs, dim=1)[0]
-
+    # print(outputs)
+    probabilities = F.softmax(outputs, dim=1)[0]
     # Map probabilities to class labels using label mapping
-  class_probs = {class_name: probability.item() for class_name, probability in zip(label_map.keys(), probabilities)}
-
-  return class_probs
+    class_probs = {label_map[i]: probabilities[i].item() for i in range(len(probabilities))}
+    return class_probs
