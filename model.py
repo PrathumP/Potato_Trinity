@@ -25,6 +25,9 @@ from torchvision.utils import make_grid
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data import random_split
 from torch.utils.data import Dataset, DataLoader
+
+# device = torch.device("cpu")
+
 # %matplotlib inline
 # class Potato(nn.Module):
 #     def training_step(self, batch):
@@ -243,7 +246,13 @@ from PIL import Image
 
 def predict(img_path):
     model = ResNet9(3, 3)
-    model.load_state_dict(torch.load('PotatoWeights.pth'))
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+        model.load_state_dict(torch.load('PotatoWeights.pth', map_location=device))
+        model.to(device)
+    else:
+        device = torch.device('cpu')
+        model.load_state_dict(torch.load('PotatoWeights.pth', map_location=device))
     transform = transforms.Compose([
         transforms.Resize((256, 256)),  # Resize to the input size expected by the model
         transforms.ToTensor(),           # Convert PIL image to PyTorch tensor
