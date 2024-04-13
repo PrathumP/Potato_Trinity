@@ -53,7 +53,7 @@ from PIL import Image
 import os
 
 # Define the data path and label mapping
-data_path = 'drive/MyDrive/Potato'
+data_path = 'Potato'
 label_map = {
     'Potato___healthy': 0,
     'Potato___Early_blight': 1,
@@ -146,202 +146,202 @@ print(label)
 
 len(custom_dataset)
 
-def show_example(img, label):   #printing the images
-    print('Label: ', dataset.classes[label], "("+str(label)+")")
-    plt.imshow(img.permute(1, 2, 0))
+# def show_example(img, label):   #printing the images
+#     print('Label: ', Dataset.classes[label], "("+str(label)+")")
+#     plt.imshow(img.permute(1, 2, 0))
 
-random_seed = 42
-torch.manual_seed(random_seed);
+# random_seed = 42
+# torch.manual_seed(random_seed);
 
-val_size = 450
-train_size = len(custom_dataset) - val_size
+# val_size = 450
+# train_size = len(custom_dataset) - val_size
 
-train_ds, val_ds = random_split(custom_dataset, [train_size, val_size])
-len(train_ds), len(val_ds)
+# train_ds, val_ds = random_split(custom_dataset, [train_size, val_size])
+# len(train_ds), len(val_ds)
 
-from torch.utils.data.dataloader import DataLoader
+# from torch.utils.data.dataloader import DataLoader
 
-batch_size=48
+# batch_size=48
 
-train_loader = DataLoader(train_ds, batch_size, shuffle=True, num_workers=4, pin_memory=True)
-val_loader = DataLoader(val_ds, batch_size*2, num_workers=4, pin_memory=True)
+# train_loader = DataLoader(train_ds, batch_size, shuffle=True, num_workers=4, pin_memory=True)
+# val_loader = DataLoader(val_ds, batch_size*2, num_workers=4, pin_memory=True)
 
-len(train_loader) #54 batches of training data
+# len(train_loader) #54 batches of training data
 
-len(val_loader)  #8 batches of validation data
+# len(val_loader)  #8 batches of validation data
 
-import torch.nn as nn
-import torch.nn.functional as F
+# import torch.nn as nn
+# import torch.nn.functional as F
 
-class ImageClassification(nn.Module):
-    def training_step(self, batch):
-        images, labels = batch
-        out = self(images)                  # Generate predictions
-        loss = F.cross_entropy(out, labels) # Calculate loss
-        return loss
+# class ImageClassification(nn.Module):
+#     def training_step(self, batch):
+#         images, labels = batch
+#         out = self(images)                  # Generate predictions
+#         loss = F.cross_entropy(out, labels) # Calculate loss
+#         return loss
 
-    def validation_step(self, batch):
-        images, labels = batch
-        out = self(images)                    # Generate predictions for each batch
-        loss = F.cross_entropy(out, labels)   # Calculate loss for each batch
-        acc = accuracy(out, labels)           # Calculate accuracy for each batch
-        return {'val_loss': loss.detach(), 'val_acc': acc}
+#     def validation_step(self, batch):
+#         images, labels = batch
+#         out = self(images)                    # Generate predictions for each batch
+#         loss = F.cross_entropy(out, labels)   # Calculate loss for each batch
+#         acc = accuracy(out, labels)           # Calculate accuracy for each batch
+#         return {'val_loss': loss.detach(), 'val_acc': acc}
 
-    def validation_epoch_end(self, outputs):
-        batch_losses = [x['val_loss'] for x in outputs]
-        epoch_loss = torch.stack(batch_losses).mean()   # Combine losses
-        batch_accs = [x['val_acc'] for x in outputs]
-        epoch_acc = torch.stack(batch_accs).mean()      # Combine accuracies
-        return {'val_loss': epoch_loss.item(), 'val_acc': epoch_acc.item()}
+#     def validation_epoch_end(self, outputs):
+#         batch_losses = [x['val_loss'] for x in outputs]
+#         epoch_loss = torch.stack(batch_losses).mean()   # Combine losses
+#         batch_accs = [x['val_acc'] for x in outputs]
+#         epoch_acc = torch.stack(batch_accs).mean()      # Combine accuracies
+#         return {'val_loss': epoch_loss.item(), 'val_acc': epoch_acc.item()}
 
-    def epoch_end(self, epoch, result):
-        print("Epoch [{}], train_loss: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}".format(
-            epoch, result['train_loss'], result['val_loss'], result['val_acc']))
+#     def epoch_end(self, epoch, result):
+#         print("Epoch [{}], train_loss: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}".format(
+#             epoch, result['train_loss'], result['val_loss'], result['val_acc']))
 
-def accuracy(outputs, labels):
-    _, preds = torch.max(outputs, dim=1)
-    return torch.tensor(torch.sum(preds == labels).item() / len(preds))
+# def accuracy(outputs, labels):
+#     _, preds = torch.max(outputs, dim=1)
+#     return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
-class PotatoClassification(ImageClassification):
-    def __init__(self):
-        super().__init__()
-        self.network = nn.Sequential(                        #constructs the NN
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),   #input is 3 x 256 x 256
-            nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2), # output: 64 x 128 x 128
+# class PotatoClassification(ImageClassification):
+#     def __init__(self):
+#         super().__init__()
+#         self.network = nn.Sequential(                        #constructs the NN
+#             nn.Conv2d(3, 32, kernel_size=3, padding=1),   #input is 3 x 256 x 256
+#             nn.ReLU(),
+#             nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+#             nn.ReLU(),
+#             nn.MaxPool2d(2, 2), # output: 64 x 128 x 128
 
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2), # output: 128 x 64 x 64
+#             nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+#             nn.ReLU(),
+#             nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+#             nn.ReLU(),
+#             nn.MaxPool2d(2, 2), # output: 128 x 64 x 64
 
-            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2), # output: 256 x 32 x 32
+#             nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+#             nn.ReLU(),
+#             nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+#             nn.ReLU(),
+#             nn.MaxPool2d(2, 2), # output: 256 x 32 x 32
 
-            nn.Flatten(),                   #Flattens for the ANN
-            nn.Linear(256*32*32, 1024),
-            nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.ReLU(),
-            nn.Linear(512, 3))
+#             nn.Flatten(),                   #Flattens for the ANN
+#             nn.Linear(256*32*32, 1024),
+#             nn.ReLU(),
+#             nn.Linear(1024, 512),
+#             nn.ReLU(),
+#             nn.Linear(512, 3))
 
-    def forward(self, xb):
-        return self.network(xb)             #For the forward pass of the model.
+#     def forward(self, xb):
+#         return self.network(xb)             #For the forward pass of the model.
 
-def get_default_device():             #For GPU
-    """Pick GPU if available, else CPU"""
-    if torch.cuda.is_available():
-        return torch.device('cuda')
-    else:
-        return torch.device('cpu')
+# def get_default_device():             #For GPU
+#     """Pick GPU if available, else CPU"""
+#     if torch.cuda.is_available():
+#         return torch.device('cuda')
+#     else:
+#         return torch.device('cpu')
 
-def to_device(data, device):
-    """Move tensor(s) to chosen device"""
-    if isinstance(data, (list,tuple)):
-        return [to_device(x, device) for x in data]
-    return data.to(device, non_blocking=True)
+# def to_device(data, device):
+#     """Move tensor(s) to chosen device"""
+#     if isinstance(data, (list,tuple)):
+#         return [to_device(x, device) for x in data]
+#     return data.to(device, non_blocking=True)
 
-class DeviceDataLoader():
-    """Wrap a dataloader to move data to a device"""
-    def __init__(self, dl, device):
-        self.dl = dl
-        self.device = device
+# class DeviceDataLoader():
+#     """Wrap a dataloader to move data to a device"""
+#     def __init__(self, dl, device):
+#         self.dl = dl
+#         self.device = device
 
-    def __iter__(self):
-        """Yield a batch of data after moving it to device"""
-        for b in self.dl:
-            yield to_device(b, self.device)
+#     def __iter__(self):
+#         """Yield a batch of data after moving it to device"""
+#         for b in self.dl:
+#             yield to_device(b, self.device)
 
-    def __len__(self):
-        """Number of batches"""
-        return len(self.dl)
+#     def __len__(self):
+#         """Number of batches"""
+#         return len(self.dl)
 
-model = PotatoClassification()
-model
+# model = PotatoClassification()
+# model
 
-torch.cuda.is_available()
+# torch.cuda.is_available()
 
-def get_default_device():
-    """Pick GPU if available, else CPU"""
-    if torch.cuda.is_available():
-        return torch.device('cuda')
-    else:
-        return torch.device('cpu')
+# def get_default_device():
+#     """Pick GPU if available, else CPU"""
+#     if torch.cuda.is_available():
+#         return torch.device('cuda')
+#     else:
+#         return torch.device('cpu')
 
-def to_device(data, device):
-    """Move tensor(s) to chosen device"""
-    if isinstance(data, (list,tuple)):
-        return [to_device(x, device) for x in data]
-    return data.to(device, non_blocking=True)
+# def to_device(data, device):
+#     """Move tensor(s) to chosen device"""
+#     if isinstance(data, (list,tuple)):
+#         return [to_device(x, device) for x in data]
+#     return data.to(device, non_blocking=True)
 
-class DeviceDataLoader():
-    """Wrap a dataloader to move data to a device"""
-    def __init__(self, dl, device):
-        self.dl = dl
-        self.device = device
+# class DeviceDataLoader():
+#     """Wrap a dataloader to move data to a device"""
+#     def __init__(self, dl, device):
+#         self.dl = dl
+#         self.device = device
 
-    def __iter__(self):
-        """Yield a batch of data after moving it to device"""
-        for b in self.dl:
-            yield to_device(b, self.device)
+#     def __iter__(self):
+#         """Yield a batch of data after moving it to device"""
+#         for b in self.dl:
+#             yield to_device(b, self.device)
 
-    def __len__(self):
-        """Number of batches"""
-        return len(self.dl)
+#     def __len__(self):
+#         """Number of batches"""
+#         return len(self.dl)
 
-device = get_default_device()
-device
+# device = get_default_device()
+# device
 
-train_loader = DeviceDataLoader(train_loader, device) #moves the train,val data and model to the GPU
-val_loader = DeviceDataLoader(val_loader, device)
-to_device(model, device)
+# train_loader = DeviceDataLoader(train_loader, device) #moves the train,val data and model to the GPU
+# val_loader = DeviceDataLoader(val_loader, device)
+# to_device(model, device)
 
-@torch.no_grad()
-def evaluate(model, val_loader):                #evaluates validation accuracy for every single batch across the entire val_data.
-    model.eval()                                #sets the PyTorch model to evaluation mode
-    outputs = [model.validation_step(batch) for batch in val_loader]
-    return model.validation_epoch_end(outputs)
+# @torch.no_grad()
+# def evaluate(model, val_loader):                #evaluates validation accuracy for every single batch across the entire val_data.
+#     model.eval()                                #sets the PyTorch model to evaluation mode
+#     outputs = [model.validation_step(batch) for batch in val_loader]
+#     return model.validation_epoch_end(outputs)
 
-def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
-    history = []
-    optimizer = opt_func(model.parameters(), lr)
-    for epoch in range(epochs):
-        # Training Phase
-        model.train()                            #tells pytorch that the model is training.
-        train_losses = []
-        for batch in train_loader:
-            loss = model.training_step(batch)
-            train_losses.append(loss)
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
-        # Validation phase
-        result = evaluate(model, val_loader)
-        result['train_loss'] = torch.stack(train_losses).mean().item()
-        model.epoch_end(epoch, result)
-        history.append(result)
-    return history
+# def fit(epochs, lr, model, train_loader, val_loader, opt_func=torch.optim.SGD):
+#     history = []
+#     optimizer = opt_func(model.parameters(), lr)
+#     for epoch in range(epochs):
+#         # Training Phase
+#         model.train()                            #tells pytorch that the model is training.
+#         train_losses = []
+#         for batch in train_loader:
+#             loss = model.training_step(batch)
+#             train_losses.append(loss)
+#             loss.backward()
+#             optimizer.step()
+#             optimizer.zero_grad()
+#         # Validation phase
+#         result = evaluate(model, val_loader)
+#         result['train_loss'] = torch.stack(train_losses).mean().item()
+#         model.epoch_end(epoch, result)
+#         history.append(result)
+#     return history
 
-model = to_device(PotatoClassification(), device)
-model
+# model = to_device(PotatoClassification(), device)
+# model
 
-evaluate(model, val_loader)
+# evaluate(model, val_loader)
 
-num_epochs = 10
-opt_func = torch.optim.Adam
-lr = 0.001
+# num_epochs = 10
+# opt_func = torch.optim.Adam
+# lr = 0.001
 
-history = fit(num_epochs, lr, model, train_loader, val_loader, opt_func)
+# history = fit(num_epochs, lr, model, train_loader, val_loader, opt_func)
 
-img,_=custom_dataset[0]
-def predict(img):
-  return "Potato__healthy"
+# img,_=custom_dataset[0]
+# def predict(img):
+#   return "Potato__healthy"
 
 
 

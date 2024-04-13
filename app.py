@@ -1,10 +1,10 @@
 import streamlit as st
 from PIL import Image
-from leafdetection import predict
+from dummy import predict
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
-st.title("Dehao's Simple Image Classification App")
+st.title("Potato Classification")
 st.write("")
 
 file_up = st.file_uploader("Upload an image", type="jpg")
