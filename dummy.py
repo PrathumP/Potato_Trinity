@@ -23,4 +23,5 @@ from PIL import Image
 
 
 def predict(img):
-    return "HELLO"
+    a = {"healthy": 8, "early_blight": 86, "late_blight": 6}
+    return (a)
