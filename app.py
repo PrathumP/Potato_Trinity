@@ -43,24 +43,49 @@ def display_preventive_measures(predicted_disease):
 
 st.set_page_config(page_title="Potato Disease Classification", page_icon="🥔")
 
-@st.cache_data
-def get_img(file):
-    with open(file, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+# @st.cache_data
+# def get_img(file):
+#     with open(file, "rb") as f:
+#         data = f.read()
+#     return base64.b64encode(data).decode()
 
-local_image_path = 'bgg.png'  # Make sure the image is in the same folder
-img = get_img(local_image_path)
+# @st.cache(allow_output_mutation=True)
+# def get_base64_of_bin_file(bin_file):
+#     with open(bin_file, 'rb') as f:
+#         data = f.read()
+#     return base64.b64encode(data).decode()
 
-page_bg_img = f"""
-[data-testid="stAppViewContainer"] {{ background-image: url("data:image/png;base64,{img}"); background-size: cover; }}
+# original_title = '<h1 style="font-family: serif; color:white; font-size: 20px;">Streamlit CSS Styling✨ </h1>'
+# st.markdown(original_title, unsafe_allow_html=True)
+
+
+# Set the background image
+background_image = """
+<style>
+[data-testid="stAppViewContainer"] > .main {
+    background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20240104/pngtree-green-wave-aesthetic-countryside-vector-illustration-of-an-abstract-eco-farm-image_13893034.png");
+    background-size: 100vw 100vh; 
+    background-position: center;  
+    background-repeat: no-repeat;
+}
+</style>
 """
+
+st.sidebar.title("About")
+st.sidebar.write("This Streamlit app is designed for potato disease classification.")
+st.sidebar.write("It uses a convolutional neural network (CNN) to predict whether a potato leaf is infected or not.")
+st.sidebar.write("Creators:")
+st.sidebar.write("- Harshit Bro ")
+st.sidebar.write("- PrathumP")
+st.sidebar.write("- Abhinav muth")
+
+st.markdown(background_image, unsafe_allow_html=True)
 
 st.title("Potato Disease Classification")
 st.write("")
-st.write("This tool is aimed to predict if a potato leaf is infected or not using CNN")
+st.write("### This tool is aimed to predict if a potato leaf is infected or not using CNN")
 st.write("")
-st.write("Upload an image of a potato leaf to classify its disease.")
+st.write("### Upload an image of a potato leaf to classify its disease.")
 
 file_up = st.file_uploader("Choose an image", type=["jpg"])
 

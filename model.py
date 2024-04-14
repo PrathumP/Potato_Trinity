@@ -245,29 +245,30 @@ class ResNet9(Potato):
 from PIL import Image
 
 def predict(img_path):
-    model = ResNet9(3, 3)
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-        model.load_state_dict(torch.load('PotatoWeights.pth', map_location=device))
-        model.to(device)
-    else:
-        device = torch.device('cpu')
-        model.load_state_dict(torch.load('PotatoWeights.pth', map_location=device))
+    img = Image.open(img_path)
+    # Apply transformations
     transform = transforms.Compose([
         transforms.Resize((256, 256)),  # Resize to the input size expected by the model
         transforms.ToTensor(),           # Convert PIL image to PyTorch tensor
         # If the model was trained with normalization, apply it here
         # transforms.Normalize(mean=[...], std=[...])
     ])
+    img = transform(img).unsqueeze(0)
+    model = ResNet9(3, 3)
+    if torch.cuda.is_available():
+        img = img.cuda()
+        device = torch.device('cuda')
+        model.load_state_dict(torch.load('PotatoWeights.pth', map_location=device))
+        model.to(device)
+    else:
+        device = torch.device('cpu')
+        model.load_state_dict(torch.load('PotatoWeights.pth', map_location=device))
     label_map = {
         0: 'Potato__healthy',
         1: 'Early_blight',
         2: 'Late_blight'
     }
     # Load the image
-    img = Image.open(img_path)
-    # Apply transformations
-    img = transform(img).unsqueeze(0)
     # Set model to evaluation mode
     model.eval()
     # Get model predictions
