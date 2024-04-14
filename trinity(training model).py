@@ -261,7 +261,7 @@ class ResNet9(Potato):
         out = self.classifier(out)
         return out
 
-def get_default_device():             #For GPU
+def get_default_device():         
     """Pick GPU if available, else CPU"""
     if torch.cuda.is_available():
         return torch.device('cuda')
@@ -359,5 +359,5 @@ lr = 0.1
 
 history = fit_one_cycle(num_epochs, lr, model, train_loader, val_loader, opt_func)
 
-torch.save(model.state_dict(), 'PotatoWeights2.pth')
+torch.save(model.state_dict(), 'PotatoWeights.pth')
 
