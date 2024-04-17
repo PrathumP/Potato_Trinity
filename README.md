@@ -4,6 +4,7 @@
 
 ## Overview
 This is a simple image classification web application, using both Streamlit and PyTorch used to detect early stage potato diseases. This project was developed by Harshit Kumar Singh, Abhinav Areliya and Prathum Pandey.
+[![Watch the video](https://drive.google.com/file/d/1IZYhnPyXFtkhaIZyJDkzNeJDIv1bLuB8/view?usp=sharing)](https://drive.google.com/file/d/1xC8cQqKzm_gMBdLD2nXN8q05zS6CIAce/view?usp=drive_link))
 
 ## Description
 
